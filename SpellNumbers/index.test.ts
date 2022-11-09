@@ -83,3 +83,8 @@ Deno.test("Get value of 1000", () => {
     const name = spellNumber(1000);
     assertEquals(name, "one thousand");
 });
+
+// Deno.test("Get value of 1001", {only: true}, () => {
+//     const name = spellNumber(1001);
+//     assertEquals(name, "one thousand and one");
+// });

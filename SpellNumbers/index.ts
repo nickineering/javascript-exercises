@@ -5,12 +5,12 @@ import {
     UnsupportedArgumentException,
 } from "./util.ts";
 
+/**
+ * Given a number as a parameter
+ * When that number is unsupported
+ * Then throw a useful error explaining that
+ */
 function validateNumberSupport(num: number): void {
-    /**
-     * Given a number as a parameter
-     * When that number is unsupported
-     * Then throw a useful error explaining that
-     */
     if (num < 1 || num > 1000) {
         throw new UnsupportedArgumentException(
             `Number ${num} is not within supported range (1-1000)`,
@@ -21,16 +21,16 @@ function validateNumberSupport(num: number): void {
     }
 }
 
+/**
+ * Given an object of separators
+ * When two numbers are supplied
+ * Then return the appropriate separator to place between the two numbers
+ */
 function getSeparator(
     lastNumber: number,
     nextNumber: number,
     separators: IndexedStrings,
 ): string {
-    /**
-     * Given an object of separators
-     * When two numbers are supplied
-     * Then return the appropriate separator to place between the two numbers
-     */
     if (lastNumber) {
         const separatorIndex = getHighestIndexMatch(
             lastNumber + nextNumber,
