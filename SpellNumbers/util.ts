@@ -12,16 +12,20 @@ export class UnsupportedArgumentException extends Error {
  * Given a Map indexed by a number
  * When queried by another number
  * Then return the index with the highest number that is still less than the query
+ *
+ * @param query the max number acceptable
+ * @param names a Map of strings indexed by the minimum number they can be used after
+ * @returns
  */
 export function getHighestIndexMatch(
     query: number,
     names: Map<number, string>,
 ): number {
-    let highest = 0;
+    let highestFound = 0;
     names.forEach((_value: string, key: number): void => {
-        if (key <= query && key > highest) {
-            highest = key;
+        if (key <= query && key > highestFound) {
+            highestFound = key;
         }
     });
-    return highest;
+    return highestFound;
 }

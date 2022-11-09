@@ -5,6 +5,9 @@ import {getHighestIndexMatch, UnsupportedArgumentException} from "./util.ts";
  * Given a number as a parameter
  * When that number is unsupported
  * Then throw a useful error explaining that
+ *
+ * @param num the number to be validated
+ * @throws {UnsupportedArgumentException} when number is outside 1-1000 or decimal
  */
 function validateNumberSupport(num: number): void {
     if (num < 1 || num > 1000) {
@@ -13,7 +16,7 @@ function validateNumberSupport(num: number): void {
         );
     }
     if (num % 1 != 0) {
-        throw new UnsupportedArgumentException(`Number ${num} is not an integer`);
+        throw new UnsupportedArgumentException(`Number ${num} is not a whole number`);
     }
 }
 
@@ -21,15 +24,21 @@ function validateNumberSupport(num: number): void {
  * Given an object of separators
  * When two numbers are supplied
  * Then return the appropriate separator to place between the two numbers
+ *
+ * @param previousNumber the number before the separator
+ * @param nextNumber the number after the separator
+ * @param separators a Map of separator strings indexed by the minimum number they can
+ * be used after
+ * @returns the appropriate separator for the given numbers
  */
 function getSeparator(
-    lastNumber: number,
+    previousNumber: number,
     nextNumber: number,
     separators: Map<number, string>,
 ): string {
-    if (lastNumber) {
+    if (previousNumber) {
         const separatorIndex = getHighestIndexMatch(
-            lastNumber + nextNumber,
+            previousNumber + nextNumber,
             separators,
         );
         return separators.get(separatorIndex) ?? "";
@@ -37,39 +46,43 @@ function getSeparator(
     return "";
 }
 
-function getHundredsAdjustments(
-    remaining: number,
-    nextNumber: number,
-    names: Map<number, string>,
-): {words: string; subtrahend: number} {
-    const adjustments = {words: "", subtrahend: 0};
-    if (nextNumber >= 100) {
-        const coefficient = Math.floor(remaining / nextNumber);
-        adjustments.words = names.get(coefficient) + " ";
-        adjustments.subtrahend = nextNumber * coefficient;
-    } else {
-        adjustments.subtrahend = nextNumber;
-    }
-    return adjustments;
-}
-
+/**
+ * Given a number
+ * When the number is a whole number between 1 and 1000 inclusive
+ * Then return its English language spelling
+ *
+ * @param num the number to be spelt
+ * @returns the English language spelling of the number
+ * @throws {UnsupportedArgumentException} when number is outside 1-1000 or decimal
+ */
 export function spellNumber(num: number): string {
+    // Throw error when num is not supported
     validateNumberSupport(num);
 
     let remaining = num;
     let words = "";
+    // Each number pronounced from highest to lowest (excluding smaller numbers used to
+    // multiply bigger numbers. E.g. "TWO thousand and one"). Essentially a Roman
+    // numeral representation of any number.
     const compositeNumbers = [];
+
     while (remaining > 0) {
+        // Get the next number for which there is a word
         const nextNumber = getHighestIndexMatch(remaining, numberNamesEn);
-        const lastNumber = compositeNumbers.at(-1) ?? 0;
-        words += getSeparator(lastNumber, nextNumber, numberSeparatorsEn);
-        const adjustments = getHundredsAdjustments(
-            remaining,
-            nextNumber,
-            numberNamesEn,
-        );
-        words += adjustments.words;
-        remaining -= adjustments.subtrahend;
+        const previousNumber = compositeNumbers.at(-1) ?? 0;
+        // Calculate anything needed between this and the previous number
+        words += getSeparator(previousNumber, nextNumber, numberSeparatorsEn);
+
+        // Calculate any coefficients (THREE hundred) so that the full product can be
+        // subtracted. In English coefficient is always 1 below 200.
+        const coefficient = Math.floor(remaining / nextNumber);
+        remaining -= nextNumber * coefficient;
+        // In English we say "ONE hundred" or "ONE thousand" so add that here
+        if (nextNumber >= 100) {
+            words += numberNamesEn.get(coefficient) + " ";
+        }
+
+        // Add the finished number to the output
         words += numberNamesEn.get(nextNumber);
         compositeNumbers.push(nextNumber);
     }
