@@ -1,5 +1,3 @@
-export type IndexedStrings = {[index: number]: string};
-
 /**
  * Thrown when an argument is supplied which is not supported
  */
@@ -11,19 +9,19 @@ export class UnsupportedArgumentException extends Error {
 }
 
 /**
- * Given an object indexed by a number of type IndexedStrings
+ * Given a Map indexed by a number
  * When queried by another number
  * Then return the index with the highest number that is still less than the query
  */
-export function getHighestIndexMatch(query: number, names: IndexedStrings): number {
-    const keys = Object.keys(names);
-    const highest = keys.reduce((previous: number, currentString: string): number => {
-        // TypeScript object keys are saved as strings, so we parse them back
-        const current = parseInt(currentString);
-        if (current <= query && current > previous) {
-            return current;
+export function getHighestIndexMatch(
+    query: number,
+    names: Map<number, string>,
+): number {
+    let highest = 0;
+    names.forEach((_value: string, key: number): void => {
+        if (key <= query && key > highest) {
+            highest = key;
         }
-        return previous;
-    }, 0);
+    });
     return highest;
 }

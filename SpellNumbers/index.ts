@@ -1,9 +1,5 @@
 import {numberNamesEn, numberSeparatorsEn} from "./numbers.en.ts";
-import {
-    getHighestIndexMatch,
-    IndexedStrings,
-    UnsupportedArgumentException,
-} from "./util.ts";
+import {getHighestIndexMatch, UnsupportedArgumentException} from "./util.ts";
 
 /**
  * Given a number as a parameter
@@ -29,14 +25,14 @@ function validateNumberSupport(num: number): void {
 function getSeparator(
     lastNumber: number,
     nextNumber: number,
-    separators: IndexedStrings,
+    separators: Map<number, string>,
 ): string {
     if (lastNumber) {
         const separatorIndex = getHighestIndexMatch(
             lastNumber + nextNumber,
             separators,
         );
-        return separators[separatorIndex];
+        return separators.get(separatorIndex) ?? "";
     }
     return "";
 }
@@ -44,12 +40,12 @@ function getSeparator(
 function getHundredsAdjustments(
     remaining: number,
     nextNumber: number,
-    names: IndexedStrings,
+    names: Map<number, string>,
 ): {words: string; subtrahend: number} {
     const adjustments = {words: "", subtrahend: 0};
     if (nextNumber >= 100) {
         const coefficient = Math.floor(remaining / nextNumber);
-        adjustments.words = names[coefficient] + " ";
+        adjustments.words = names.get(coefficient) + " ";
         adjustments.subtrahend = nextNumber * coefficient;
     } else {
         adjustments.subtrahend = nextNumber;
@@ -74,7 +70,7 @@ export function spellNumber(num: number): string {
         );
         words += adjustments.words;
         remaining -= adjustments.subtrahend;
-        words += numberNamesEn[nextNumber];
+        words += numberNamesEn.get(nextNumber);
         compositeNumbers.push(nextNumber);
     }
     return words;
