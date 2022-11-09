@@ -15,7 +15,7 @@ export class UnsupportedArgumentException extends Error {
  *
  * @param query the max number acceptable
  * @param names a Map of strings indexed by the minimum number they can be used after
- * @returns
+ * @returns the highest index still less than query
  */
 export function getHighestIndexMatch(
     query: number,
