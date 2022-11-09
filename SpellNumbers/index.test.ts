@@ -3,12 +3,12 @@ import {
     assertThrows,
 } from "https://deno.land/std@0.162.0/testing/asserts.ts";
 import {spellNumber} from "./index.ts";
-import {InvalidArgumentException} from "./util.ts";
+import {UnsupportedArgumentException} from "./util.ts";
 
 Deno.test("-1 throws error", () => {
     assertThrows(
         () => spellNumber(-1),
-        InvalidArgumentException,
+        UnsupportedArgumentException,
         "Number -1 is not within supported range (1-1000)",
     );
 });
@@ -16,7 +16,7 @@ Deno.test("-1 throws error", () => {
 Deno.test("1001 throws error", () => {
     assertThrows(
         () => spellNumber(1001),
-        InvalidArgumentException,
+        UnsupportedArgumentException,
         "Number 1001 is not within supported range (1-1000)",
     );
 });
@@ -24,7 +24,7 @@ Deno.test("1001 throws error", () => {
 Deno.test("1.1 throws error", () => {
     assertThrows(
         () => spellNumber(1.1),
-        InvalidArgumentException,
+        UnsupportedArgumentException,
         "Number 1.1 is not an integer",
     );
 });
