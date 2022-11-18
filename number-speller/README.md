@@ -25,9 +25,10 @@ No additional installations are required to run this project.
 
 To run the test suite simple run `deno test`.
 
-## Limitations and future work
+## Currently unsupported
 
-1. Zero, negative numbers, decimal numbers, and numbers over 1000 are not currently
-   supported.
-1. Localisation is presently only provided for English.
-1. It is not presently possible to install as a standalone package.
+1. Zero
+1. Negative numbers
+1. Decimal numbers
+1. Numbers over 1000
+1. Non-English localisation
