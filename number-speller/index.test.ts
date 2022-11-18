@@ -25,7 +25,7 @@ Deno.test("1.1 throws error", () => {
     assertThrows(
         () => spellNumber(1.1),
         UnsupportedArgumentException,
-        "Number 1.1 is not an integer",
+        "Number 1.1 is not a whole number",
     );
 });
 
